@@ -1,0 +1,26 @@
+{
+  "name": "lab4_cifrados_uvg",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bin/www.js",
+  "type": "module",
+  "scripts": {
+    "start": "node bin/www.js",
+    "dev": "nodemon bin/www.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aq202/lab4_cifrados_uvg.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Aq202/lab4_cifrados_uvg/issues"
+  },
+  "homepage": "https://github.com/Aq202/lab4_cifrados_uvg#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "mysql2": "^3.14.0"
+  }
+}
