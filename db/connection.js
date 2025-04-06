@@ -9,4 +9,19 @@ const connection = mysql.createConnection({
   port: consts.db.port,
 });
 
-export default connection;
+// Función helper que envuelve connection.execute en una promesa
+const executeQuery = (query, params) => {
+  return new Promise((resolve, reject) => {
+    connection.execute(query, params, (error, results, fields) => {
+      if (error) {
+        return reject(error);
+      }
+      resolve([results, fields]);
+    });
+  });
+};
+
+export {
+  connection,
+  executeQuery,
+};
