@@ -1,9 +1,9 @@
 import express from 'express';
-
+import multerMiddleware from '../../middlewares/multerMiddleware.js';
+import uploadFile from '../../services/uploadFile/uploadFile.js';
+import {saveFileController} from './file.controller.js';
 const fileRouter = express.Router();
 
-fileRouter.get('/', (req, res) => {
-    res.send('File route is working!');
-});
+fileRouter.post('/save', multerMiddleware(uploadFile.single('file')), saveFileController);
 
 export default fileRouter;

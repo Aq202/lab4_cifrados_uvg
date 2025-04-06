@@ -19,63 +19,60 @@ function useFetch() {
     setResult(null);
     setError(null);
     setLoading(true);
-    try {
-      const heads = {
-        'Content-Type': 'application/json',
-        ...headers,
-      };
-      if (removeContentType) delete heads['Content-Type'];
 
-      const reply = await fetch(uri, {
-        method,
-        body,
-        headers,
-        signal,
-        credentials: 'include',
-      });
+    const heads = {
+      'Content-Type': 'application/json',
+      ...headers,
+    };
+    if (removeContentType) delete heads['Content-Type'];
 
-      if (!reply.ok) {
-        let errorObj;
-        try {
-          errorObj = await reply.json();
-        } catch (e) {
-          errorObj = { message: await reply.text() };
-        }
-        setError(errorObj);
-      } else {
-        let res;
+    const reply = await fetch(uri, {
+      method,
+      body,
+      headers,
+      signal,
+      credentials: 'include',
+    });
 
-        if (!parse) res = reply;
-        else if (toBlob) res = await reply.blob();
-        else if (toJson) res = await reply.json();
-        else res = await reply.text();
+    if (reply.ok) {
 
-        setResult(res ?? true);
-      }
-      
-    } catch (ex) {
+      let res;
+      if (!parse) res = reply;
+      else if (toBlob) res = await reply.blob();
+      else if (toJson) res = await reply.json();
+      else res = await reply.text();
+
+      setResult(res ?? true);
+    } else {
       let parsedError = null;
 
       try {
-        parsedError = await ex.json();
+        parsedError = await reply.json();
+      // eslint-disable-next-line no-unused-vars
       } catch (e) {
         // No se pudo convertir el error a json
-        console.error('Error parsing error response:', e);
       }
       setError({
-        status: ex?.status,
-        message: parsedError?.err?.trim() || ex?.statusMessage?.trim() || ex?.statusText?.trim() || 'Ocurrió un error.',
+        status: reply?.status,
+        message: parsedError?.err?.trim() || reply?.statusMessage?.trim() || reply?.statusText?.trim() || 'Ocurrió un error.',
       });
-    } finally {
-      setLoading(false);
-    }
+    } 
+
+    setLoading(false);
   };
+
+  const reset = () => {
+    setResult(null);
+    setError(null);
+    setLoading(false);
+  }
 
   return {
     callFetch,
     result,
     error,
     loading,
+    reset,
   };
 }
 
