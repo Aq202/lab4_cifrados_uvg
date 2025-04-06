@@ -2,11 +2,12 @@ import { generateKeyPairAsync } from "../../utils/keyGenerator.js";
 import { savePublicKey } from "./key.model.js";
 
 const generateKeyPair = async (req, res) => {
-    const { userId, algorithm } = req.body;
+    const userId = req.user && req.user.id; // Obtener el userId del token JWT
+    const { algorithm } = req.body;
 
     // Verificar que la solicitud contenga userId y algoritmo
     if (!userId || !algorithm) {
-        return res.status(400).json({ message: "El ID del usuario y el algoritmo de encriptado son requeridos" });
+        return res.status(400).json({ message: "El usuario autenticado y el algoritmo de encriptado son requeridos" });
     }
 
     try {
