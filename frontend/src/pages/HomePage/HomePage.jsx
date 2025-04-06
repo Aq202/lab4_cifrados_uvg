@@ -1,15 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Button from '../../components/Button/Button';
 import styles from './HomePage.module.css';
-import InputFile from '../../components/InputFile/InputFile';
+import FileUploadSection from '../../components/FileUploadSection/FileUploadSection';
 
 function HomePage() {
-
-    const [fileToUpload, setFileToUpload] = useState(null);
-
-    const handleFileUploadChange = (file) => {
-        setFileToUpload(file[0]);
-    }
  
   return (
     <div className={styles.pageContainer}>
@@ -19,18 +13,7 @@ function HomePage() {
         </header>
 
         <main>
-
-            <section className={styles.section}>
-                <h2 className={styles.sectionTitle}>Subir archivo:</h2>
-                
-                <InputFile onChange={handleFileUploadChange}/>
-                
-                {fileToUpload && <div className={styles.fileInfo}>
-                    <p className={styles.fileName}>{fileToUpload?.name}</p>
-                    <Button text="Subir archivo" className={styles.uploadButton} blue />
-                </div>}
-            </section>
-
+            <FileUploadSection />   
         </main>
     </div>
   );

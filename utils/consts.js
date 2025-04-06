@@ -7,6 +7,7 @@ const consts = {
         password: '',
         user: 'root',
     },
+    uploadFileSizeLimit: 5000000
   };
   export default consts;
   

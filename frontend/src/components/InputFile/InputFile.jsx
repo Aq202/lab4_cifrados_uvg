@@ -4,7 +4,7 @@ import { FaFileUpload as UploadIcon } from 'react-icons/fa';
 import styles from './InputFile.module.css';
 import Button from '../Button';
 
-function InputFile({ className, onChange, disabled }) {
+function InputFile({ className, onChange, disabled, text='Seleccionar archivo' }) {
   const handleOnChange = (evt) => {
     const images = evt.target.files;
     if (onChange && images) onChange(Array.from(images));
@@ -15,12 +15,11 @@ function InputFile({ className, onChange, disabled }) {
         type="file"
         className={styles.inputFile}
         onChange={handleOnChange}
-        multiple
         disabled={disabled}
-        title={disabled ? 'El máximo de archivos es 5.' : null}
+        title={disabled ? 'El máximo de archivos es 1.' : null}
       />
       <UploadIcon className={styles.uploadButtIcon} />
-      Seleccionar archivo
+      {text}
     </Button>
   );
 }
