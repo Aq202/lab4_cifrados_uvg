@@ -7,16 +7,20 @@ const SessionContext = createContext();
 function SessionProvider({ children }) {
   const [token, setToken] = useState(null);
 
-  const data = {
-    token,
-    setToken,
-  };
-
-  useEffect(() => {
+  const refreshToken = () => {
     const token = localStorage.getItem('token');
     if (token) {
       setToken(token);
     }
+  };
+
+  const data = {
+    token,
+    refreshToken,
+  };
+
+  useEffect(() => {
+    refreshToken();
   }, []);
 
   return <SessionContext.Provider value={data}>{children}</SessionContext.Provider>;

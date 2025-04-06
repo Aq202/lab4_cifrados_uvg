@@ -34,13 +34,25 @@ function useFetch() {
         credentials: 'include',
       });
 
-      let res;
-      if (!parse) res = reply;
-      else if (toBlob) res = await reply.blob();
-      else if (toJson) res = await reply.json();
-      else res = await reply.text();
+      if (!reply.ok) {
+        let errorObj;
+        try {
+          errorObj = await reply.json();
+        } catch (e) {
+          errorObj = { message: await reply.text() };
+        }
+        setError(errorObj);
+      } else {
+        let res;
 
-      setResult(res ?? true);
+        if (!parse) res = reply;
+        else if (toBlob) res = await reply.blob();
+        else if (toJson) res = await reply.json();
+        else res = await reply.text();
+
+        setResult(res ?? true);
+      }
+      
     } catch (ex) {
       let parsedError = null;
 

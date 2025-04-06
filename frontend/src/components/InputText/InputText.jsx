@@ -4,14 +4,14 @@ import randomId from '@helpers/randomString';
 import styles from './InputText.module.css';
 
 function InputText({
-  title, error, value, onChange, onBlur, onFocus, name, className, disabled, ...props
+  title, error, value, onChange, onBlur, onFocus, name, className, disabled, hidden, ...props
 }) {
   const id = randomId(15);
   return (
     <div className={`${styles.inputTextContainer} ${error ? styles.error : ''} ${className}`}>
       <input
         className={styles.inputField}
-        type="text"
+        type={hidden ? 'password' : 'text'}
         {...props}
         id={id}
         name={name}
@@ -39,6 +39,7 @@ InputText.propTypes = {
   name: PropTypes.string,
   className: PropTypes.string,
   disabled: PropTypes.bool,
+  hidden: PropTypes.bool,
 };
 
 InputText.defaultProps = {
@@ -51,6 +52,7 @@ InputText.defaultProps = {
   title: null,
   className: '',
   disabled: false,
+  hidden: false,
 };
 
 export default InputText;
