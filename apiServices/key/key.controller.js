@@ -7,6 +7,7 @@ const generateKeyPair = async (req, res) => {
 
     // Verificar que la solicitud contenga userId y algoritmo
     if (!userId || !algorithm) {
+        res.statusMessage = "El usuario autenticado y el algoritmo de encriptado son requeridos";
         return res.status(400).json({ message: "El usuario autenticado y el algoritmo de encriptado son requeridos" });
     }
 

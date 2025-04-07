@@ -5,6 +5,7 @@ import SessionContext from "../../context/SessionContext";
 import InputText from "../../components/InputText";
 import Button from "../../components/Button";
 import Spinner from "../../components/Spinner";
+import { Link } from "react-router-dom";
 
 function LoginPage() {
 
@@ -94,13 +95,15 @@ function LoginPage() {
                         text="Iniciar sesión"
                         onClick={handleLogin}
                         loading={loadingLogin}
-                        className={styles.loginButton}
                     />
                 )}
                 {loadingLogin && <Spinner />}
             </div>
             {errorLogin && <p className={styles.errorMessage}>{errorLogin.message}</p>}
           </form>
+          <p className={styles.registerLink}>
+            ¿No tienes cuenta? <Link to="/register" className={styles.registerHere}>Regístrate aquí</Link>
+          </p>
         </div>
       );
 }
