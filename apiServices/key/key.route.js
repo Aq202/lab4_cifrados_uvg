@@ -1,6 +1,6 @@
 import express from 'express';
 import { generateKeyPair } from './key.controller.js';
-import authenticateToken from '../../middleware/auth.middleware.js';
+import authenticateToken from '../../middlewares/auth.middleware.js';
 
 const keyRouter = express.Router();
 

@@ -1,5 +1,5 @@
 import express from 'express';
-import multerMiddleware from '../../middlewares/multerMiddleware.js';
+import multerMiddleware from '../../middlewares/multer.middleware.js';
 import uploadFile from '../../services/uploadFile/uploadFile.js';
 import {saveFileController} from './file.controller.js';
 const fileRouter = express.Router();
