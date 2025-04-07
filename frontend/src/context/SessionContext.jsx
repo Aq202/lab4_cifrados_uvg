@@ -14,9 +14,14 @@ function SessionProvider({ children }) {
     }
   };
 
+  const clearToken = () => {
+    setToken(null);
+  };
+
   const data = {
     token,
     refreshToken,
+    clearToken,
   };
 
   useEffect(() => {

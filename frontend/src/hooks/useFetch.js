@@ -1,9 +1,12 @@
 import { useState } from 'react';
+import useLogout from './useLogout';
 
 function useFetch() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const logout = useLogout();
 
   const callFetch = async ({
     uri,
@@ -43,7 +46,7 @@ function useFetch() {
       else res = await reply.text();
 
       setResult(res ?? true);
-    } else {
+    } else if (reply.status !== 403) {
       let parsedError = null;
 
       try {
@@ -56,7 +59,11 @@ function useFetch() {
         status: reply?.status,
         message: parsedError?.err?.trim() || reply?.statusMessage?.trim() || reply?.statusText?.trim() || 'Ocurrió un error.',
       });
-    } 
+    } else {
+      // Forbidden error, force logout
+      logout();
+      return;
+    }
 
     setLoading(false);
   };

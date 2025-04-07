@@ -1,0 +1,9 @@
+CREATE TABLE files (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  file_name VARCHAR(255) NOT NULL,
+  mime_type VARCHAR(100),
+  content LONGBLOB NOT NULL,
+  user_id INT,
+  hash VARCHAR(600),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

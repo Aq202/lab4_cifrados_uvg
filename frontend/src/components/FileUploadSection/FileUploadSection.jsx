@@ -49,6 +49,7 @@ function FileUploadSection() {
 
         const formData = new FormData();
         formData.append('file', fileToUpload);
+        formData.append('fileName', fileToUpload.name);
         formData.append('privateKey', privateKey[1]);
 
         fetchUploadFile({

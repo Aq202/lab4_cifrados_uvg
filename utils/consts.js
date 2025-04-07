@@ -7,7 +7,11 @@ const consts = {
         password: '',
         user: 'root',
     },
-    uploadFileSizeLimit: 5000000
+    uploadFileSizeLimit: 5000000,
+    cypherAlgorithms: {
+        RSA: 'RSA',
+        ECC: 'ECC',
+    },
   };
   export default consts;
   

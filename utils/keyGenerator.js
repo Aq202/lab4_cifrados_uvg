@@ -39,6 +39,7 @@ const generateKeyPairAsync = (algorithm) => {
               },
               (err, publicKey, privateKey) => {
                 if (err) return reject(err);
+                
                 resolve({ publicKey, privateKey });
               }
             );

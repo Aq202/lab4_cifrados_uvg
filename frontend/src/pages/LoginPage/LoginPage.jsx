@@ -5,14 +5,12 @@ import SessionContext from "../../context/SessionContext";
 import InputText from "../../components/InputText";
 import Button from "../../components/Button";
 import Spinner from "../../components/Spinner";
-import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
 
     const [form, setForm] = useState({});
     const [errors, setErrors] = useState(null);
     const { refreshToken } = useContext(SessionContext);
-    const navigate = useNavigate();
 
     const {
         callFetch: fetchLogin,
@@ -63,8 +61,7 @@ function LoginPage() {
         if (!resultLogin?.token) return;
 
         localStorage.setItem("token", resultLogin.token);
-        refreshToken(resultLogin.token);
-        navigate('/');
+        refreshToken();
 
     }, [resultLogin]);
 
