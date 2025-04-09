@@ -1,0 +1,1 @@
+ALTER TABLE files ADD CONSTRAINT unique_file_name UNIQUE (file_name);

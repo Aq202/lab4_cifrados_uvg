@@ -1,11 +1,21 @@
 import { executeQuery } from "../../db/connection.js";
+import CustomError from "../../utils/customError.js";
 
-const saveFile = ({ fileName, mimeType, fileContent, userId, hash}) => {
+const saveFile = async ({ fileName, mimeType, fileContent, userId, hash}) => {
+    try{
     const query = `
       INSERT INTO files (file_name, mime_type, content, user_id, hash) 
       VALUES (?, ?, ?, ?, ?)
     `;
-    return executeQuery(query, [fileName, mimeType, fileContent, userId, hash]);
+    return await executeQuery(query, [fileName, mimeType, fileContent, userId, hash]);
+    }catch (error) {
+        // Verificar si el error es por duplicado
+        if (error.code === 'ER_DUP_ENTRY') {
+            throw new CustomError('El archivo ya existe, intenta cambiar el nombre del archivo.', 400);
+        } else {
+            throw error; // Lanzar el error original si no es un duplicado
+        }
+    }
 }
 
 const getFile = async (fileId) => {
