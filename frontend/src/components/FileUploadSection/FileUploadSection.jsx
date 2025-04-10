@@ -7,11 +7,13 @@ import useFetch from '../../hooks/useFetch';
 import consts from '../../helpers/consts';
 import LoadingView from '../../components/LoadingView/LoadingView';
 import { FaCheckCircle as SuccessIcon } from "react-icons/fa";
+import CheckBox from '../CheckBox/CheckBox';
 
 function FileUploadSection() {
 
     const [fileToUpload, setFileToUpload] = useState(null);
     const [privateKey, setPrivateKey] = useState(null);
+    const [signFile, setSignFile] = useState(true);
 
     const token = useToken();
 
@@ -51,6 +53,7 @@ function FileUploadSection() {
         formData.append('file', fileToUpload);
         formData.append('fileName', fileToUpload.name);
         formData.append('privateKey', privateKey[1]);
+        formData.append('includeHash', signFile);
 
         fetchUploadFile({
             uri: `${consts.apiPath}/file/save`,
@@ -62,6 +65,10 @@ function FileUploadSection() {
             },
         })
 
+    }
+
+    const handleSignCheckboxChange = (e) => {
+        setSignFile(e.target.checked);
     }
 
     useEffect(() => {
@@ -84,6 +91,8 @@ function FileUploadSection() {
                 <p className={styles.fileName}>{privateKey?.[0]}</p>
             </div>
 
+            <CheckBox label="Firmar archivo" onChange={handleSignCheckboxChange} checked={signFile} />
+            <br />
             <Button text="Subir archivo"
                 className={styles.uploadButton}
                 blue
