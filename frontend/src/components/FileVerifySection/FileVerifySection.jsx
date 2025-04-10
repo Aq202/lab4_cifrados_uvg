@@ -13,7 +13,6 @@ import InputText from '../InputText/InputText';
 function FileVerifySection() {
 
     const [fileToUpload, setFileToUpload] = useState(null);
-    const [publicKey, setPublicKey] = useState(null);
     const [userId, setUserId] = useState(null);
     const [userIdError, setUserIdError] = useState(null);
     
@@ -41,7 +40,6 @@ function FileVerifySection() {
         const formData = new FormData();
         formData.append('file', fileToUpload);
         formData.append('fileName', fileToUpload.name);
-        formData.append('publicKey', publicKey[1]);
         formData.append('userId', userId);
 
         fetchUploadFile({
@@ -54,21 +52,6 @@ function FileVerifySection() {
             },
         })
 
-    }
-
-    const handlekeyFileChange = (file) => {
-        const keyFile = file?.[0];
-        if (keyFile) {
-            const reader = new FileReader();
-        
-            // Evento que se ejecuta cuando se ha leído el archivo
-            reader.onload = function(e) {
-              const fileText = e.target.result;
-              setPublicKey([keyFile.name, fileText]);
-            };
-        
-            reader.readAsText(keyFile);
-        }
     }
 
     const handleUserIdBlur = (e) => {
@@ -101,11 +84,6 @@ function FileVerifySection() {
                 <p className={styles.fileName}>{fileToUpload?.name}</p>
             </div>
 
-            <div className={styles.inputFileContainer}>
-                <InputFile onChange={handlekeyFileChange} text='Seleccionar llave públicad del autor del archivo'/>
-                <p className={styles.fileName}>{publicKey?.[0]}</p>
-            </div>
-
             <InputText 
                 title="Id del usuario"
                 className={styles.inputText}
@@ -120,7 +98,7 @@ function FileVerifySection() {
                 className={styles.uploadButton}
                 blue
                 onClick={handleFileUpload}
-                disabled={!fileToUpload || !publicKey || !(/^[0-9]+$/.test(userId))} />
+                disabled={!fileToUpload || !(/^[0-9]+$/.test(userId))} />
 
 
             {uploadFileError && <p className={styles.error}>{uploadFileError.message}</p>}

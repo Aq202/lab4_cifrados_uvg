@@ -126,13 +126,20 @@ const getFileController = async (req, res) => {
 
     // Descifrar el contenido
     let content = null;
-    if (algorithm === consts.cypherAlgorithms.RSA) {
-        content = decryptWithPublicKeyRSA(public_key, encryptedContent);
-    }else if (algorithm === consts.cypherAlgorithms.ECC) {
 
-    }else{
-        res.status(400).send({ err: 'Algoritmo de descifrado no soportado.', status: 400 });
-        return;
+    try{
+        if (algorithm === consts.cypherAlgorithms.RSA) {
+            content = decryptWithPublicKeyRSA(public_key, encryptedContent);
+        }else if (algorithm === consts.cypherAlgorithms.ECC) {
+
+        }else{
+            res.status(400).send({ err: 'Algoritmo de descifrado no soportado.', status: 400 });
+            return;
+        }
+    }catch(ex){
+        // La llave pública no es válida
+        res.status(400).send({ err: 'La llave pública no es válida para descifrar el archivo.', status: 400 });
+        return; 
     }
 
     // Devolver archivo
@@ -194,17 +201,23 @@ const verifyFileController = async (req, res) => {
 
         // Remover saltos de línea del publicKey
         const publicKeyCleaned = public_key.replace(/\\n/g, '\n');
-
+        console.log(publicKeyCleaned);
         // Descifrar el hash original usando la llave pública
         let originalHashDecrypted = null;
 
-        if (algorithm === consts.cypherAlgorithms.RSA) {
-            originalHashDecrypted = decryptWithPublicKeyRSA(publicKeyCleaned, originalHash);
-        } else if (algorithm === consts.cypherAlgorithms.ECC) {
+        try{
+            if (algorithm === consts.cypherAlgorithms.RSA) {
+                originalHashDecrypted = decryptWithPublicKeyRSA(publicKeyCleaned, originalHash);
+            } else if (algorithm === consts.cypherAlgorithms.ECC) {
 
-        } else {
-            res.status(400).send({ err: 'Algoritmo de descifrado no soportado.', status: 400 });
-            return;
+            } else {
+                res.status(400).send({ err: 'Algoritmo de descifrado no soportado.', status: 400 });
+                return;
+            }
+        }catch(ex){
+            // La llave pública no es válida
+            res.status(400).send({ err: 'La llave pública no es válida para descifrar la firma digital.', status: 400 });
+            return; 
         }
 
         // Obtener contenido del archivo subido
