@@ -56,17 +56,25 @@ const saveFileController = async (req, res) => {
 
         if (includeHash === 'true' || includeHash === true) {
             
-            if (algorithm === consts.cypherAlgorithms.RSA) {
-                // Firma digital usando RSA
-                const fileContentHash = sha256(fileContent);
-                hashEncrypted = encryptWithPrivateKeyRSA(privateKeyCleaned, fileContentHash);
+            try{
+                if (algorithm === consts.cypherAlgorithms.RSA) {
+                    // Firma digital usando RSA
+                    const fileContentHash = sha256(fileContent);
+                    hashEncrypted = encryptWithPrivateKeyRSA(privateKeyCleaned, fileContentHash);
 
-            } else if (algorithm === consts.cypherAlgorithms.ECC) {
-                // Firma digital usando ECC
-                hashEncrypted = signECC(privateKeyCleaned, fileContent);
-            } else {
-                res.status(400).send({ err: 'Algoritmo de cifrado no soportado.', status: 400 });
-                return;
+                } else if (algorithm === consts.cypherAlgorithms.ECC) {
+                    // Firma digital usando ECC
+                    hashEncrypted = signECC(privateKeyCleaned, fileContent);
+                } else {
+                    res.status(400).send({ err: 'Algoritmo de cifrado no soportado.', status: 400 });
+                    return;
+                }
+            
+            }catch(ex){
+                // La llave privada no es válida
+                console.log(ex);
+                res.status(400).send({ err: 'La llave privada no es válida para firmar el archivo.', status: 400 });
+                return; 
             }
         }
 
@@ -74,14 +82,21 @@ const saveFileController = async (req, res) => {
 
         let fileContentEncrypted = null;
 
-        if (algorithm === consts.cypherAlgorithms.RSA) {
-            // Cifrar contenido usando RSA
-            fileContentEncrypted = encryptWithPrivateKeyRSA(privateKeyCleaned, fileContentBase64);
-        } else if (algorithm === consts.cypherAlgorithms.ECC) {
-            fileContentEncrypted = fileContentBase64; // No se cifra el contenido usando ECC
-        } else {
-            res.status(400).send({ err: 'Algoritmo de cifrado no soportado.', status: 400 });
-            return;
+        try{
+            if (algorithm === consts.cypherAlgorithms.RSA) {
+                // Cifrar contenido usando RSA
+                fileContentEncrypted = encryptWithPrivateKeyRSA(privateKeyCleaned, fileContentBase64);
+            } else if (algorithm === consts.cypherAlgorithms.ECC) {
+                fileContentEncrypted = fileContentBase64; // No se cifra el contenido usando ECC
+            } else {
+                res.status(400).send({ err: 'Algoritmo de cifrado no soportado.', status: 400 });
+                return;
+            }
+        }catch(ex){
+            // La llave privada no es válida
+            console.log(ex)
+            res.status(400).send({ err: 'La llave privada no es válida para cifrar el archivo.', status: 400 });
+            return; 
         }
 
         await saveFile({
