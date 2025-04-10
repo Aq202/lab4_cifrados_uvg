@@ -1,17 +1,23 @@
-import React, { useEffect } from 'react';
+import React, { use, useEffect, useContext } from 'react';
 import styles from './HomePage.module.css';
 import Button from '../../components/Button/Button';
 import Spinner from '../../components/Spinner';
 import FileUploadSection from '../../components/FileUploadSection/FileUploadSection';
 import FileVerifySection from '../../components/FileVerifySection/FileVerifySection';
+import FileTable from '../../components/FileTable/FileTable';
 import PopUp from '../../components/PopUp/PopUp';
+import SessionContext from '../../context/SessionContext';
 import usePopUp from '../../hooks/usePopUp';
 import useFetch from '../../hooks/useFetch';
 import useToken from '../../hooks/useToken';
+import { useNavigate } from "react-router-dom";
 
 function HomePage() {
 
   const [isKeyGenOpen, openKeyGen, closeKeyGen] = usePopUp(false);
+  const { refreshToken } = useContext(SessionContext);
+  const navigate = useNavigate();
+
   const {
     callFetch: fetchKeyGen,
     result: resultKeyGen,
@@ -19,6 +25,9 @@ function HomePage() {
     error: errorKeyGen,
     reset: resetKeyGen,
   } = useFetch();
+
+  const { callFetch: fetchFiles, result: filesResult, loading: loadingFiles } = useFetch();
+
   const token = useToken();
 
   const handleKeyGen = async (algorithm) => {
@@ -33,6 +42,14 @@ function HomePage() {
       },
     });
 
+  }
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    refreshToken();
+    
+    // Refrescar la página para que se elimine el token de la sesión
+    window.location.reload();
   }
 
   useEffect(() => {
@@ -51,12 +68,24 @@ function HomePage() {
     URL.revokeObjectURL(url);
 
   }, [resultKeyGen]);
+
+  useEffect(() => {
+
+    fetchFiles({
+      uri: '/api/file',
+      method: 'GET',
+    });
+
+  }, []);
  
   return (
     <div className={styles.pageContainer}>
         <header className={styles.header}>
             <h1 className={styles.title}>Bienvenido Usuario</h1>
-            <Button text="Generar llaves" green onClick={openKeyGen} />
+            <div className={styles.keyGenButtonContainer}>
+              <Button text="Generar llaves" green onClick={openKeyGen} />
+              <Button text="Cerrar sesión" onClick={logout} />
+            </div>
         </header>
 
         <main>
@@ -65,6 +94,8 @@ function HomePage() {
             <br />
             <FileVerifySection />
         </main>
+
+        <FileTable files={filesResult?.files} loading={loadingFiles}/>
 
       {isKeyGenOpen && (
         <PopUp close={closeKeyGen} closeButton closeWithBackground maxWidth={600} callback={resetKeyGen}>

@@ -22,6 +22,14 @@ function RegisterPage() {
         error: errorRegister
     } = useFetch();
 
+    const {
+        callFetch: fetchKeyGen,
+        result: resultKeyGen,
+        loading: loadingKeyGen,
+        error: errorKeyGen,
+        reset: resetKeyGen,
+      } = useFetch();
+
     const handleFormChange = (e) => {
         const field = e.target.name;
         const { value } = e.target;
@@ -75,6 +83,18 @@ function RegisterPage() {
 
     useEffect(() => {
         if (!resultRegister?.token) return;
+
+        // Colocar la llave privada generada en un archivo y descargarla
+        const { privateKey } = resultRegister;
+        const blob = new Blob([privateKey], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'privateKey.pem';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
 
         localStorage.setItem("token", resultRegister.token);
         refreshToken(resultRegister.token);
@@ -130,6 +150,7 @@ function RegisterPage() {
                 ]}
                 placeholder="Selecciona un algoritmo"
             />
+            <p className={styles.infoText}>Al registrate, se descargará automáticamente tu llave privada</p>
             <div className={styles.buttonContainer}>
                 {!loadingRegister && (
                     <Button

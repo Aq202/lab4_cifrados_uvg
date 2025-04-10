@@ -6,7 +6,7 @@ import { getUserPublicKey } from "../key/key.model.js";
 import fs from 'fs';
 import path from 'path';
 import mime from 'mime-types';
-import { getFile, getFileByName, saveFile } from "./file.model.js";
+import { getFile, getFileByName, saveFile, getFiles } from "./file.model.js";
 import CustomError from "../../utils/customError.js";
 
 const saveFileController = async (req, res) => {
@@ -141,6 +141,15 @@ const getFileController = async (req, res) => {
     res.send(content);
 }
 
+const getFilesController = async (req, res) => {
+    const files = await getFiles();
+    if (!files) {
+        res.status(404).send({ err: 'No se encontraron archivos.', status: 404 });
+        return;
+    }
+    res.status(200).send({ files, status: 200 });
+}
+
 const verifyFileController = async (req, res) => {
     try{
         const { fileName: fileOriginalName, userId } = req.body;
@@ -228,5 +237,6 @@ const verifyFileController = async (req, res) => {
 export {
     saveFileController,
     getFileController,
-    verifyFileController
+    verifyFileController,
+    getFilesController
 };

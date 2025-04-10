@@ -35,6 +35,22 @@ const getFile = async (fileId) => {
     };
 };
 
+const getFiles = async() => {
+    const query = `SELECT f.id, f.file_name, u.email, f.created_at FROM files f INNER JOIN user u ON f.user_id = u.id`;
+    const [result] = await executeQuery(query, []);
+
+    if (!result[0]) return null;
+
+    const rows = result.map((row) => ({
+        id: row.id,
+        fileName: row.file_name,
+        author: row.email,
+        createdAt: row.created_at
+    }));
+
+    return rows;
+}
+
 const getFileByName = async (fileName, userId) => {
     const query = `
     SELECT * FROM files f
@@ -57,4 +73,4 @@ const getFileByName = async (fileName, userId) => {
 };
 
 
-export { saveFile, getFile, getFileByName };
+export { saveFile, getFile, getFiles, getFileByName };
