@@ -81,7 +81,7 @@ function HomePage() {
   return (
     <div className={styles.pageContainer}>
         <header className={styles.header}>
-            <h1 className={styles.title}>Bienvenido Usuario</h1>
+            <h1 className={styles.title}>Bienvenido a AsyStorage</h1>
             <div className={styles.keyGenButtonContainer}>
               <Button text="Generar llaves" green onClick={openKeyGen} />
               <Button text="Cerrar sesión" onClick={logout} />

@@ -58,6 +58,7 @@ function FileTable({ files, loading }) {
                     <tr>
                         <th>Nombre</th>
                         <th>Autor</th>
+                        <th>ID del autor</th>
                         <th>Creado</th>
                         <th>Descargar</th>
                     </tr>
@@ -67,6 +68,7 @@ function FileTable({ files, loading }) {
                         <tr key={file.id}>
                         <td>{file.fileName}</td>
                         <td>{file.author}</td>
+                        <td>{file.authorId}</td>
                         <td>{new Date(file.createdAt).toLocaleString('es-ES', {
                             year: 'numeric',
                             month: 'long',
