@@ -1,0 +1,36 @@
+
+.sectionTitle{
+    margin-bottom: 20px;
+    margin-top: 10px;
+    font-weight: normal;
+}
+
+.error{
+    color: var(--error-color--);
+}
+
+.success{
+    margin-top: 10px;
+}
+
+.successIcon{
+    color: green
+}
+
+.errorIcon{
+    color: red;
+}
+
+.inputFileContainer{
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 20px;
+}
+
+.inputText{
+    width: 100%;
+    max-width: 300px;
+    margin-bottom: 25px;
+}

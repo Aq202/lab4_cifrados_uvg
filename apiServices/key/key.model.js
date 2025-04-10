@@ -13,7 +13,7 @@ const savePublicKey = async({ userId, publicKey, algorithm }) => {
 };
 
 const getUserPublicKey = async(userId) => {
-    const query = `SELECT public_key, algorithm FROM public_key WHERE user_id = ?`;
+    const query = `SELECT public_key, algorithm, id FROM public_key WHERE user_id = ?`;
     const [result] = await executeQuery(query, [userId]);
     return result[0];
 }

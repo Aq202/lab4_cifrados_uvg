@@ -2,6 +2,7 @@ import React from 'react';
 import Button from '../../components/Button/Button';
 import styles from './HomePage.module.css';
 import FileUploadSection from '../../components/FileUploadSection/FileUploadSection';
+import FileVerifySection from '../../components/FileVerifySection/FileVerifySection';
 
 function HomePage() {
  
@@ -13,7 +14,10 @@ function HomePage() {
         </header>
 
         <main>
-            <FileUploadSection />   
+            <FileUploadSection />
+            <br />
+            <br />
+            <FileVerifySection />
         </main>
     </div>
   );
