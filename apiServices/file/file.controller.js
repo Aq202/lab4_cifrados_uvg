@@ -25,8 +25,6 @@ const saveFileController = async (req, res) => {
             error = "El campo 'fileName' es obligatorio.";
         }
 
-        
-        
         // Obtener tipo de algoritmo de la clave pública (debería ser el mismo que el de la clave privada)
         const publicKeyData = await getUserPublicKey(userId);
         if (!publicKeyData) {
@@ -48,6 +46,7 @@ const saveFileController = async (req, res) => {
         const {fileName} = req.uploadedFiles[0];
         const filePath = path.join(global.dirname, 'files', fileName);
         const fileContent = fs.readFileSync(filePath, 'utf-8');
+        const fileContentBase64 = Buffer.from(fileContent).toString('base64');
 
         // Obtener tipo de archivo
         const fileMimeType = mime.lookup(fileOriginalName);
@@ -56,12 +55,15 @@ const saveFileController = async (req, res) => {
         let hashEncrypted = null;
 
         if (includeHash === 'true' || includeHash === true) {
-            const fileContentHash = sha256(fileContent);
-
+            
             if (algorithm === consts.cypherAlgorithms.RSA) {
+                // Firma digital usando RSA
+                const fileContentHash = sha256(fileContent);
                 hashEncrypted = encryptWithPrivateKeyRSA(privateKeyCleaned, fileContentHash);
+
             } else if (algorithm === consts.cypherAlgorithms.ECC) {
-                hashEncrypted = signECC(privateKeyCleaned, fileContentHash);
+                // Firma digital usando ECC
+                hashEncrypted = signECC(privateKeyCleaned, fileContent);
             } else {
                 res.status(400).send({ err: 'Algoritmo de cifrado no soportado.', status: 400 });
                 return;
@@ -73,9 +75,10 @@ const saveFileController = async (req, res) => {
         let fileContentEncrypted = null;
 
         if (algorithm === consts.cypherAlgorithms.RSA) {
-            fileContentEncrypted = encryptWithPrivateKeyRSA(privateKeyCleaned, fileContent);
+            // Cifrar contenido usando RSA
+            fileContentEncrypted = encryptWithPrivateKeyRSA(privateKeyCleaned, fileContentBase64);
         } else if (algorithm === consts.cypherAlgorithms.ECC) {
-            hashEncrypted = signECC(privateKeyCleaned, fileContentHash);
+            fileContentEncrypted = fileContentBase64; // No se cifra el contenido usando ECC
         } else {
             res.status(400).send({ err: 'Algoritmo de cifrado no soportado.', status: 400 });
             return;
@@ -131,7 +134,7 @@ const getFileController = async (req, res) => {
         if (algorithm === consts.cypherAlgorithms.RSA) {
             content = decryptWithPublicKeyRSA(public_key, encryptedContent);
         }else if (algorithm === consts.cypherAlgorithms.ECC) {
-
+            content = encryptedContent; // No se cifra el contenido usando ECC
         }else{
             res.status(400).send({ err: 'Algoritmo de descifrado no soportado.', status: 400 });
             return;
@@ -141,6 +144,8 @@ const getFileController = async (req, res) => {
         res.status(400).send({ err: 'La llave pública no es válida para descifrar el archivo.', status: 400 });
         return; 
     }
+
+    content = Buffer.from(content, 'base64').toString('utf-8'); // Convertir de base64 a utf-8
 
     // Devolver archivo
     res.setHeader('Content-Type', mimeType);
@@ -201,39 +206,47 @@ const verifyFileController = async (req, res) => {
 
         // Remover saltos de línea del publicKey
         const publicKeyCleaned = public_key.replace(/\\n/g, '\n');
-        console.log(publicKeyCleaned);
-        // Descifrar el hash original usando la llave pública
-        let originalHashDecrypted = null;
+       
 
-        try{
-            if (algorithm === consts.cypherAlgorithms.RSA) {
+         // Obtener contenido del archivo subido
+         const {fileName} = req.uploadedFiles[0];
+         const filePath = path.join(global.dirname, 'files', fileName);
+         const fileContent = fs.readFileSync(filePath, 'utf-8');
+         
+         
+         let match = null;
+         
+        if (algorithm === consts.cypherAlgorithms.RSA) {
+            // Generar hash del contenido del archivo subido
+            const file_content_hash = sha256(fileContent);
+            
+            let originalHashDecrypted = null;
+            try{
                 originalHashDecrypted = decryptWithPublicKeyRSA(publicKeyCleaned, originalHash);
-            } else if (algorithm === consts.cypherAlgorithms.ECC) {
-
-            } else {
-                res.status(400).send({ err: 'Algoritmo de descifrado no soportado.', status: 400 });
-                return;
+            }catch(ex){
+                // La llave pública no es válida
+                console.log(ex)
+                res.status(400).send({ err: 'La llave pública no es válida para descifrar la firma digital.', status: 400 });
+                return; 
             }
-        }catch(ex){
-            // La llave pública no es válida
-            res.status(400).send({ err: 'La llave pública no es válida para descifrar la firma digital.', status: 400 });
-            return; 
+
+            // Comparar el hash original con el hash del archivo subido
+            match = originalHashDecrypted === file_content_hash;
+        
+
+        } else if (algorithm === consts.cypherAlgorithms.ECC) {
+            // Verificar firma digital usando ECC
+            match = verifyECC(publicKeyCleaned, fileContent, originalHash); 
+
+        } else {
+            res.status(400).send({ err: 'Algoritmo de descifrado no soportado.', status: 400 });
+            return;
         }
 
-        // Obtener contenido del archivo subido
-        const {fileName} = req.uploadedFiles[0];
-        const filePath = path.join(global.dirname, 'files', fileName);
-        const fileContent = fs.readFileSync(filePath, 'utf-8');
-        
-        // Generar hash del contenido del archivo subido
-        const file_content_hash = sha256(fileContent);
-        
-        // Comparar el hash original con el hash del archivo subido
-        const match = originalHashDecrypted === file_content_hash;
         const message = match ? 'El archivo coincide con el original.' : 'El archivo fue modificado.';
-
-
         res.status(200).send({ message, match, status: 200 });
+        return;     
+
     }catch(ex){
         let err = "Ocurrio un error inesperado.";
         let status = 500;
@@ -246,6 +259,8 @@ const verifyFileController = async (req, res) => {
         console.log(ex);
     }
 }
+
+
 
 export {
     saveFileController,

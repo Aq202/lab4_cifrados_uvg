@@ -20,6 +20,7 @@ const generateKeyPair = async (req, res) => {
 
         res.status(200).json({ message: 'Par de claves generado exitosamente.', publicKeyId, publicKey, privateKey });
     } catch (error) {
+        console.log(error);
         res.status(500).json({ message: 'Ocurrió un error al generar el par de claves:', error });
     }
 
