@@ -113,3 +113,13 @@ El laboratorio consistió en el desarrollo de una aplicación que permitiera a l
     - fileName: Nombre original del archivo que se quiere subir.
     - userId: id del usuario dueño del archivo.
 
+### ✅ Conclusión
+
+Este laboratorio permitió comprender de manera práctica la utilidad de distintos algoritmos criptográficos. Se utilizaron tres tipos principales de algoritmos, cada uno con un propósito específico:
+
+- JWT (JSON Web Tokens) se empleó para gestionar la autenticación y autorización de usuarios. Este mecanismo permite que, una vez autenticado, el usuario pueda interactuar con el sistema de forma segura y sin 
+ necesidad de enviar sus credenciales en cada solicitud, reduciendo así el riesgo de exposición de información sensible.
+
+- RSA y ECC se usaron para la generación de llaves públicas y privadas. Ambos algoritmos permiten la firma digital y el cifrado asimétrico, pero ECC ofrece una seguridad equivalente a RSA con claves más pequeñas, lo cual mejora el rendimiento y es ideal para dispositivos con recursos limitados. El usuario podía elegir el algoritmo de preferencia, lo que también permitió comparar sus características en la práctica.
+
+- SHA-256, una función de hashing, se utilizó para garantizar la integridad de los archivos. Al generar un hash único del contenido, cualquier modificación posterior puede ser detectada durante el proceso de verificación, asegurando así que el archivo no ha sido alterado. Cuando un autor firma su archivo, y otro usuario desea validarlo, el hash generado a partir del archivo subido por el usuario debe ser igual al hash almacenado en base de datos para el archivo original.
