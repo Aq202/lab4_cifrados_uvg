@@ -1,7 +1,7 @@
 # Laboratorio 4
 
-Diego Andrés Morales Aquino - 21762
-Pablo Andrés Zamora Vásquez - 21780
+Diego Andrés Morales Aquino - 21762<br>
+Pablo Andrés Zamora Vásquez - 21780<br>
 
 ## Parte 1
 
@@ -64,10 +64,19 @@ El laboratorio consistió en el desarrollo de una aplicación que permitiera a l
     - email: email del usuario a autenticar.
     - password: contraseña del usuario.
 
+* **/key/generate:** <br>
+    Generación de pares de llaves.
+
+    Método Post
+
+    Parámetros del body:
+
+    - algorithm: Algoritmo a utilizar para generar las llaves privada y pública (RSA/ECC).
+
 * **/file:** <br> 
     Obtener listado de archivos guardados:
 
-    Método get
+    Método Get
 
 
 * **/file/save:** <br> 
