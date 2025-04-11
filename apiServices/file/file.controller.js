@@ -45,7 +45,7 @@ const saveFileController = async (req, res) => {
         // Obtener contenido del archivo subido
         const {fileName} = req.uploadedFiles[0];
         const filePath = path.join(global.dirname, 'files', fileName);
-        const fileContent = fs.readFileSync(filePath, 'utf-8');
+        const fileContent = fs.readFileSync(filePath);
         const fileContentBase64 = Buffer.from(fileContent).toString('base64');
 
         // Obtener tipo de archivo
@@ -160,7 +160,7 @@ const getFileController = async (req, res) => {
         return; 
     }
 
-    content = Buffer.from(content, 'base64').toString('utf-8'); // Convertir de base64 a utf-8
+    content = Buffer.from(content, 'base64'); // Convertir de base64 a utf-8
 
     // Devolver archivo
     res.setHeader('Content-Type', mimeType);
@@ -226,7 +226,7 @@ const verifyFileController = async (req, res) => {
          // Obtener contenido del archivo subido
          const {fileName} = req.uploadedFiles[0];
          const filePath = path.join(global.dirname, 'files', fileName);
-         const fileContent = fs.readFileSync(filePath, 'utf-8');
+         const fileContent = fs.readFileSync(filePath);
          
          
          let match = null;
